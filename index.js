@@ -20,13 +20,12 @@ app.use(cors());
 mongoose.connect(mongodbConnectionString, {
 	useUnifiedTopology: true,
 	useNewUrlParser: true
-})
-;
+});
 
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, "Connection Error with MongoDB"));
 db.once('open', () => console.log('successfully connected to MongoDB.'));
 
 app.use('/users', userRoutes);
-app.use('/products', productRoutes);
-app.listen(port, () => console.log(`Successfully connected to port ${port}`))
+// app.use('/products', productRoutes);
+app.listen(port, () => console.log(`Successfully connected to port ${port}`));
