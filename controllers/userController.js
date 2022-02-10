@@ -56,3 +56,35 @@ module.exports.loginUser = (user) => {
 	})
 }
 
+module.exports.getUser = (userData) => {
+
+	return User.findById(userData.id).then(result => {
+		let newResult = ({...result}._doc); 
+ 
+		delete newResult.password;
+		return newResult;
+	})
+}
+
+module.exports.updateUserDetails = (data) => {
+	console.log(data);
+	return User.findById(data.userId).then((result, err) => {
+		result.firstName = data.updatedUserDetails.firstName;
+		result.lastName = data.updatedUserDetails.lastName;
+		result.mobileNo = data.updatedUserDetails.mobileNo;
+		result.address = data.updatedUserDetails.address;
+		result.isAdmin = false; // Make sure that this is always set to false;
+
+		return result.save().then((updatedUserDetails, err) => {
+			if(err) {
+				console.log(err);
+				return false;
+			}
+			else {
+				return result;
+			}
+		})
+
+	})
+}
+

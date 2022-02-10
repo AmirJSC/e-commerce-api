@@ -14,5 +14,40 @@ router.post('/login', (req, res) => {
 	})
 });
 
+// Get the current user's data
+router.get('/', auth.verify, (req, res) => {
+	const userData = auth.decode(req.headers.authorization);
+
+	userController.getUser(userData).then(resultFromController => {
+		res.send(resultFromController)
+	})
+});
+
+// Update current user's details
+router.put('/', auth.verify, (req, res) => {
+	const data = {
+		userId: auth.decode(req.headers.authorization).id,
+		updatedUserDetails: req.body
+	};
+
+	userController.updateUserDetails(data).then(resultFromController => {
+		res.send(resultFromController)
+	})
+});
+
+// FOR ADMIN
+
+// Set a user as admin. Only the primary admin can do this.
+// router.put('/:userId/admin', auth.verify, (req, res) => {
+// 	const data = {
+		    
+// 		payload: auth.decode(req.headers.authorization)
+// 	};
+
+// 	userController.setAsAdmin(user)
+// })
+
+
+
 
 module.exports = router;
