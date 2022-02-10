@@ -17,7 +17,7 @@ module.exports.registerUser = async (user) =>  {
 			firstName: user.firstName,
 			lastName: user.lastName,
 			email: user.email,
-			password: user.bcrypt.hashSync(reqBody.password, 10),
+			password: bcrypt.hashSync(user.password, 10),
 			isAdmin: user.isAdmin,
 			mobileNo: user.mobileNo,
 			address: user.address
@@ -36,3 +36,23 @@ module.exports.registerUser = async (user) =>  {
 		return 'Email is already taken.'
 	}
 }
+
+module.exports.loginUser = (user) => {
+
+	return User.findOne({email: user.email}).then(result => {
+		if(result === null) {
+			return 'No user is found with this email.'
+		}
+		else {
+			const isPasswordCorrect = bcrypt.compareSync(user.password, result.password);
+			console.log(isPasswordCorrect);
+			if(isPasswordCorrect) {
+				return {access: auth.createAccessToken(result)}
+			} 
+			else {
+				return 'Password is incorrect.'
+			} 
+		}
+	})
+}
+

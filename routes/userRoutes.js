@@ -8,4 +8,11 @@ router.post('/register', (req, res) => {
 		res.send(resultFromController))
 });
 
+router.post('/login', (req, res) => {
+	userController.loginUser(req.body).then(resultFromController => {
+		res.send(resultFromController)
+	})
+});
+
+
 module.exports = router;
