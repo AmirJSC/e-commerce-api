@@ -24,7 +24,7 @@ const productSchema = new mongoose.Schema({
 	createdOn: {
 		type: Date,
 		default: new Date()
-	}
+	},
 	quantity: {
 		type: Number,
 		default: 0
