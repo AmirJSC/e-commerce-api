@@ -1,6 +1,10 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const auth = require('../auth.js');
+const dotenv = require('dotenv');
+
+dotenv.config();
+const primaryAdminEmail = process.env.PRIMARY_ADMIN_EMAIL;
 
 module.exports.registerUser = async (user) =>  {
 	let isEmailTaken = await User.find({email: user.email}).then(result => {
@@ -67,7 +71,7 @@ module.exports.getUser = (userData) => {
 }
 
 module.exports.updateUserDetails = (data) => {
-	console.log(data);
+	
 	return User.findById(data.userId).then((result, err) => {
 		result.firstName = data.updatedUserDetails.firstName;
 		result.lastName = data.updatedUserDetails.lastName;
@@ -81,10 +85,32 @@ module.exports.updateUserDetails = (data) => {
 				return false;
 			}
 			else {
-				return result;
+				return updatedUserDetails;
 			}
 		})
 
 	})
+}
+
+module.exports.setAuth= async (data) => {
+	
+	if(data.payload.email === primaryAdminEmail) {
+		return User.findById(data.reqBody.id).then((result, err) => {
+			result.isAdmin = data.reqBody.isAdmin;
+
+			return result.save().then((updatedUserDetails, err) => {
+				if(err) {
+					console.log(err);
+					return false;
+				}
+				else {
+					return result;
+				}
+			})
+		})
+	}
+	else {
+		return 'Only authorized personnel can do this.'
+	}
 }
 

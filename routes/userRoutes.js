@@ -35,19 +35,18 @@ router.put('/', auth.verify, (req, res) => {
 	})
 });
 
-// FOR ADMIN
+// FOR ADMIN ONLY
 
-// Set a user as admin. Only the primary admin can do this.
-// router.put('/:userId/admin', auth.verify, (req, res) => {
-// 	const data = {
-		    
-// 		payload: auth.decode(req.headers.authorization)
-// 	};
+// Set authoriy of user. Only the primary admin can do this.
+router.put('/setAuth', auth.verify, (req, res) => {
+	const data = {
+		reqBody: req.body,
+		payload: auth.decode(req.headers.authorization)
+	};
 
-// 	userController.setAsAdmin(user)
-// })
-
-
-
+	userController.setAuth(data).then(resultFromController => {
+		res.send(resultFromController)
+	})
+});
 
 module.exports = router;
