@@ -27,6 +27,14 @@ router.post('/', auth.verify, (req, res) => {
 	})
 });
 
+router.delete('/', auth.verify, (req, res) => {
+	const userId = auth.decode(req.headers.authorization).id;
+
+	cartController.deleteCart(userId).then(resultFromController => {
+		res.send(resultFromController)
+	})
+});
+
 
 
 module.exports = router;

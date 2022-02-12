@@ -62,3 +62,11 @@ module.exports.addToCart = async (data) => {
 		})
 	}
 }
+
+module.exports.deleteCart = (userId) => {
+
+	return Cart.deleteOne({userId: userId}).then(result => {
+		return result;
+	})
+}
+
