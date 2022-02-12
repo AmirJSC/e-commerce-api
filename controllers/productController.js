@@ -59,7 +59,7 @@ module.exports.categorizeProduct = (category) => {
 }
 
 module.exports.updateProductDetails = async(data) => {
-	console.log(data)
+
 	if(data.payload.isAdmin === true) {
 		return Product.findById(data.productId).then((result, err) => {
 			result.name = data.reqBody.name;

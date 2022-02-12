@@ -5,6 +5,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
+const orderRoutes = require('./routes/orderRoutes');
 
 // Server & MongoDB setup
 dotenv.config();
@@ -28,4 +29,5 @@ db.once('open', () => console.log('successfully connected to MongoDB.'));
 
 app.use('/users', userRoutes);
 app.use('/products', productRoutes);
+app.use('/orders', orderRoutes);
 app.listen(port, () => console.log(`Successfully connected to port ${port}`));

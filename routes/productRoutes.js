@@ -32,7 +32,7 @@ router.get('/all', auth.verify, (req, res) => {
 });
 
 // Get products under a specified category
-router.get('/:category', (req, res) => {
+router.get('/category/:category', (req, res) => {
 	const category = req.params.category;
 
 	productController.categorizeProduct(category).then(resultFromController => {
@@ -73,8 +73,5 @@ router.put('/archive/:productId', auth.verify, (req, res) => {
 		res.send(resultFromController)
 	})
 });
-
-// // Update a product
-// router.put()
 
 module.exports = router;
