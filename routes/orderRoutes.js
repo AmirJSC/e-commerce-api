@@ -25,7 +25,7 @@ router.get('/orderHistory', auth.verify, (req, res) => {
 // checkout the items in the cart of the logged in user
 router.post('/', auth.verify, (req, res) => {
 	const userId = auth.decode(req.headers.authorization).id;
-
+	
 	orderController.checkout(userId).then(resultFromController => {
 		res.send(resultFromController)
 	})
