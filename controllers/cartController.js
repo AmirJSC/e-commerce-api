@@ -63,6 +63,27 @@ module.exports.addToCart = async (data) => {
 	}
 }
 
+module.exports.removeProduct = async (data) => {
+	const {userId, productId} = data;
+	let cart = await Cart.findOne({userId: userId});
+	let productIndex = cart.products.findIndex(p => p.productId == productId);
+
+	if(productIndex > -1) {
+		let productItem = cart.products[productIndex];
+		cart.bill -= productItem.quantity*productItem.price;
+        cart.products.splice(productIndex,1);
+	}
+	return cart.save().then((newCart, err) => {
+		if(err) {
+			return false;
+		}
+		else {
+			return newCart
+		}
+	})
+
+}
+
 module.exports.deleteCart = (userId) => {
 
 	return Cart.deleteOne({userId: userId}).then(result => {
