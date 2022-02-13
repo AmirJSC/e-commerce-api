@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
-const secret = 'E-commerceAPI';
+const dotenv = require('dotenv');
+
+dotenv.config();
+const secret = process.env.SECRET;
 
 // Token Creation
 module.exports.createAccessToken = (user) => {

@@ -15,6 +15,10 @@ const orderSchema = new mongoose.Schema({
 			required: true,
 			min: [1, 'Quantity cannot be less than 1'],
 			default: 1
+		},
+		price: {
+			type: Number,
+			required: true
 		}
 	}],
 	bill: {
