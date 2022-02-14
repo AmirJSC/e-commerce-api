@@ -47,7 +47,7 @@ module.exports.getPopularProducts = () => {
     	},
     	{  
         	$project:{_id: 0, name:"$_id",quantity:"$quantity"}
-    } ]).sort( { quantity: -1 } ).limit(2)
+    } ]).sort( { quantity: -1 } ).limit(10)
 }
 
 module.exports.checkout = (payload) => {
