@@ -2,22 +2,24 @@ const Cart = require('../models/Cart');
 const User = require('../models/User');
 const Product = require('../models/Product');
 
-module.exports.getCart = (userId) => {
+module.exports.getCart = (payload) => {
 
-	return Cart.find({userId: userId}).then(result => {
+	return Cart.find({userId: payload.id}).then(result => {
 		return result;
 	})
 }
 
 module.exports.addToCart = async (data) => {
 	const {productId, quantity} = data.reqBody;
+
 	// findOne returns null (falsy) if nothing is found
-	let cart = await Cart.findOne({userId: data.userId});
+	let cart = await Cart.findOne({userId: data.payload.id});
 	let product = await Product.findOne({_id: productId});
 
 	if(!product) {
 		return 'Product not Found!';
 	}
+	
 	const {price, name} = product;
 
 	// If cart already exists for the user
@@ -34,60 +36,62 @@ module.exports.addToCart = async (data) => {
 			cart.products.push({productId: productId, name: name, quantity: quantity, price: price})
 		}
 		cart.bill += price * quantity;
-		return cart.save().then((updatedCart, err) => {
+
+		return cart.save().then((result, err) => {
 			if(err) {
 				return false;
 			}
 			else {
-				return updatedCart;
+				return `${name} successfully added to cart`;
 			}
 		})
 
 	}
 	else {
-		// There is no cart existing
+		// There is no cart existing so create one. 
 		cart = new Cart({
-			userId: data.userId,
+			userId: data.payload.id,
 			products: [{productId: productId, name: name, quantity: quantity, price: price}],
 			bill: price * quantity
 		});
 
-		return cart.save().then((newCart, err) => {
+		return cart.save().then((result, err) => {
 			if(err) {
 				return false;
 			}
 			else {
-				return newCart;
+				return result;
 			}
 		})
 	}
 }
+
+module.exports.deleteCart = (userId) => {
+	return Cart.deleteOne({userId: userId}).then(result => {
+		return result;
+	})
+}
+
 
 module.exports.removeProduct = async (data) => {
 	const {userId, productId} = data;
 	let cart = await Cart.findOne({userId: userId});
 	let productIndex = cart.products.findIndex(p => p.productId == productId);
 
+	// Product is in the cart
 	if(productIndex > -1) {
 		let productItem = cart.products[productIndex];
 		cart.bill -= productItem.quantity*productItem.price;
         cart.products.splice(productIndex,1);
 	}
-	return cart.save().then((newCart, err) => {
+	return cart.save().then((result, err) => {
 		if(err) {
 			return false;
 		}
 		else {
-			return newCart
+			return result;
 		}
 	})
 
-}
-
-module.exports.deleteCart = (userId) => {
-
-	return Cart.deleteOne({userId: userId}).then(result => {
-		return result;
-	})
 }
 

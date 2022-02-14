@@ -1,21 +1,34 @@
 const Product = require('../models/Product');
 
 module.exports.createProduct = async (data) => {
+	const {name, description, price, category, isActive, quantity} = data.reqBody
+
+	let isProductExisting = await Product.find({name: name}).then(result => {
+		if(result.length > 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	})
+
+	if(isProductExisting) {
+		return 'Product with the same name already exists!'
+	}
 
 	if(data.payload.isAdmin === true) {
 		let newProduct = new Product({
-			name: data.reqBody.name,
-			description: data.reqBody.description,
-			price: data.reqBody.price,
-			category: data.reqBody.category,
-			isActive: data.reqBody.isActive,
-			quantity: data.reqBody.quantity
+			name: name,
+			description: description,
+			price: price,
+			category: category,
+			isActive: isActive,
+			quantity: quantity
 
 		});
 
 		return newProduct.save().then((product, err) => {
 			if(err) {
-				console.log(err);
 				return false;
 			}
 			else {
@@ -24,7 +37,7 @@ module.exports.createProduct = async (data) => {
 		})
 	}
 	else {
-		return '${user.email} is not an admin'
+		return `${data.payload.email} is not an admin`;
 	}
 }
 
@@ -46,38 +59,41 @@ module.exports.getAllProducts = async (payload) => {
 	}
 }
 
-module.exports.getAProduct =  (productId) => {
-	return Product.findById(productId).then(result => {
-		return result;
-	})
-}   
-
 module.exports.categorizeProduct = (category) => {
 	return Product.find({category: category}).then(result => {
 		return result;
 	})
 }
 
+module.exports.getAProduct =  (productId) => {
+	return Product.findById(productId).then(result => {
+		return result;
+	})
+}   
+
 module.exports.updateProductDetails = async(data) => {
+	const {name, description, price, category, quantity} = data.reqBody;
 
 	if(data.payload.isAdmin === true) {
-		return Product.findById(data.productId).then((result, err) => {
-			result.name = data.reqBody.name;
-			result.description = data.reqBody.description;
-			result.price = data.reqBody.price;
-			result.category = data.reqBody.category;
-			result.quantity = data.reqBody.quantity;
+		return Product.findById(data.productId).then(result => {
+			result.name = name;
+			result.description = description;
+			result.price = price;
+			result.category = category;
+			result.quantity = quantity;
 
-			return result.save().then((updatedProductDetails, err) => {
+			return result.save().then((result, err) => {
 				if(err) {
-					console.log(err);
 					return false;
 				}
 				else {
-					return updatedProductDetails;
+					return result;
 				}
 			})
 		})
+	}
+	else {
+		return 'Not authorized.'
 	}
 }
 
@@ -87,12 +103,12 @@ module.exports.archiveProduct = async (data) => {
 		return Product.findById(data.productId).then((result, err) => {
 			result.isActive = false;
 
-			return result.save().then((archivedProduct, err) => {
+			return result.save().then((result, err) => {
 				if(err) {
 					return false;
 				}
 				else {
-					return archivedProduct;
+					return result;
 				}
 			})
 		})

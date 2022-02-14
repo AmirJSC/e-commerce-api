@@ -3,7 +3,7 @@ const router = express.Router();
 const productController = require('../controllers/productController');
 const auth = require('../auth');
 
-// Create a product
+// Create a product (admin)
 router.post('/', auth.verify, (req, res) => {
 	const data = {
 		payload: auth.decode(req.headers.authorization),
@@ -22,7 +22,7 @@ router.get('/', (req, res) => {
 	})
 });
 
-// Get all products, including the archived ones. 
+// Get all products, including the archived ones (admin). 
 router.get('/all', auth.verify, (req, res) => {
 	const payload = auth.decode(req.headers.authorization);
 
@@ -49,7 +49,7 @@ router.get('/:productId', (req, res) => {
 	})
 });
 
-// Update product details
+// Update product details (admin)
 router.put('/:productId', auth.verify, (req, res) => {
 	const data = {
 		productId: req.params.productId,
@@ -62,7 +62,7 @@ router.put('/:productId', auth.verify, (req, res) => {
 	})
 });
 
-// Archive a product: set isActive to false
+// Archive a product: set isActive to false (admin)
 router.put('/archive/:productId', auth.verify, (req, res) => {
 	const data = {
 		productId: req.params.productId,

@@ -6,8 +6,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 const primaryAdminEmail = process.env.PRIMARY_ADMIN_EMAIL;
 
-module.exports.registerUser = async (user) =>  {
-	let isEmailTaken = await User.find({email: user.email}).then(result => {
+module.exports.registerUser = async (reqBody) =>  {
+	let isEmailTaken = await User.find({email: reqBody.email}).then(result => {
 		if(result.length > 0) {
 			return true;
 		}
@@ -16,19 +16,20 @@ module.exports.registerUser = async (user) =>  {
 		}
 	})
 
+	const {firstName, lastName, email, password, isAdmin, mobileNo, address} = reqBody;
 	if(!isEmailTaken) {
 		let newUser = new User({
-			firstName: user.firstName,
-			lastName: user.lastName,
-			email: user.email,
-			password: bcrypt.hashSync(user.password, 10),
-			isAdmin: user.isAdmin,
-			mobileNo: user.mobileNo,
-			address: user.address
+			firstName: firstName,
+			lastName: lastName,
+			email: email,
+			password: bcrypt.hashSync(password, 10),
+			isAdmin: isAdmin,
+			mobileNo: mobileNo,
+			address: address
 		});
+
 		return newUser.save().then((user, err) => {
 			if(err) {
-				console.log(err);
 				return false;
 			}
 			else {
@@ -49,7 +50,6 @@ module.exports.loginUser = (user) => {
 		}
 		else {
 			const isPasswordCorrect = bcrypt.compareSync(user.password, result.password);
-			console.log(isPasswordCorrect);
 			if(isPasswordCorrect) {
 				return {access: auth.createAccessToken(result)}
 			} 
@@ -60,32 +60,32 @@ module.exports.loginUser = (user) => {
 	})
 }
 
-module.exports.getUser = (userData) => {
+module.exports.getUser = (payload) => {
 
-	return User.findById(userData.id).then(result => {
-		let newResult = ({...result}._doc); 
+	return User.findById(payload.id).then(result => {
+		let userData = ({...result}._doc); 
  
-		delete newResult.password;
-		return newResult;
+		delete userData.password;
+		return userData;
 	})
 }
 
 module.exports.updateUserDetails = (data) => {
-	
-	return User.findById(data.userId).then((result, err) => {
-		result.firstName = data.updatedUserDetails.firstName;
-		result.lastName = data.updatedUserDetails.lastName;
-		result.mobileNo = data.updatedUserDetails.mobileNo;
-		result.address = data.updatedUserDetails.address;
-		result.isAdmin = false; // Make sure that this is always set to false;
+	const {firstName, lastName, mobileNo, address} = data.updatedUserDetails;
 
-		return result.save().then((updatedUserDetails, err) => {
+	return User.findById(data.payload.id).then((result, err) => {
+		result.firstName = firstName;
+		result.lastName = lastName;
+		result.mobileNo = mobileNo;
+		result.address = address;
+		result.isAdmin = false; 
+
+		return result.save().then((result, err) => {
 			if(err) {
-				console.log(err);
 				return false;
 			}
 			else {
-				return updatedUserDetails;
+				return result;
 			}
 		})
 
@@ -98,9 +98,8 @@ module.exports.setAuth= async (data) => {
 		return User.findById(data.reqBody.id).then((result, err) => {
 			result.isAdmin = data.reqBody.isAdmin;
 
-			return result.save().then((updatedUserDetails, err) => {
+			return result.save().then((result, err) => {
 				if(err) {
-					console.log(err);
 					return false;
 				}
 				else {

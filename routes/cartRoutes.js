@@ -6,9 +6,9 @@ const auth = require('../auth');
 
 // Get the cart of the current user; no reqbody
 router.get('/', auth.verify, (req, res) => {
-	const userId = auth.decode(req.headers.authorization).id;
+	const payload = auth.decode(req.headers.authorization);
 
-	cartController.getCart(userId).then(resultFromController => {
+	cartController.getCart(payload).then(resultFromController => {
 		res.send(resultFromController)
 	})
 });
@@ -16,17 +16,16 @@ router.get('/', auth.verify, (req, res) => {
 // Add an item if a cart already exists. Create a new one if it doesn't. req.body -> productId and quantity
 router.post('/', auth.verify, (req, res) => {
 	const data = {
-		userId: auth.decode(req.headers.authorization).id,
+		payload: auth.decode(req.headers.authorization),
 		reqBody: req.body
 		};
-	console.log(data);
 
 	cartController.addToCart(data).then(resultFromController => {
 		res.send(resultFromController)
 	})
 });
 
-// Optional Feauture - deleting the cart; no reqBody.
+// Deleting the cart; no reqBody.
 router.delete('/delete', auth.verify, (req, res) => {
 	const userId = auth.decode(req.headers.authorization).id;
 
@@ -39,7 +38,8 @@ router.delete('/delete', auth.verify, (req, res) => {
 router.delete('/:productId', auth.verify, (req, res) => {
 	const data = {
 		userId: auth.decode(req.headers.authorization).id,
-		productId: req.params.productId};
+		productId: req.params.productId
+	};
 
 	cartController.removeProduct(data).then(resultFromController => {
 		res.send(resultFromController)

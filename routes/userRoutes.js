@@ -16,9 +16,9 @@ router.post('/login', (req, res) => {
 
 // Get the current user's data
 router.get('/', auth.verify, (req, res) => {
-	const userData = auth.decode(req.headers.authorization);
+	const payload = auth.decode(req.headers.authorization);
 
-	userController.getUser(userData).then(resultFromController => {
+	userController.getUser(payload).then(resultFromController => {
 		res.send(resultFromController)
 	})
 });
@@ -26,7 +26,7 @@ router.get('/', auth.verify, (req, res) => {
 // Update current user's details
 router.put('/', auth.verify, (req, res) => {
 	const data = {
-		userId: auth.decode(req.headers.authorization).id,
+		payload: auth.decode(req.headers.authorization),
 		updatedUserDetails: req.body
 	};
 
@@ -35,9 +35,7 @@ router.put('/', auth.verify, (req, res) => {
 	})
 });
 
-// FOR ADMIN ONLY
-
-// Set authoriy of user. Only the primary admin can do this.
+// Set authoriy of user. Only the primary admin can give/remove authorization to a user
 router.put('/setAuth', auth.verify, (req, res) => {
 	const data = {
 		reqBody: req.body,

@@ -6,7 +6,6 @@ const secret = process.env.SECRET;
 
 // Token Creation
 module.exports.createAccessToken = (user) => {
-
 	const data = {
 		id: user._id,
 		email: user.email,
@@ -24,7 +23,6 @@ module.exports.verify = (req, res, next) => {
 		token = token.slice(7, token.length);
 		return jwt.verify(token, secret, (err, data) => {
 			if(err) {
-				console.log(err);
 				return res.send({auth: "failed"});
 			}
 			else {

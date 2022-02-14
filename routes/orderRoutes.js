@@ -3,7 +3,6 @@ const router = express.Router();
 const orderController = require('../controllers/orderController');
 const auth = require('../auth');
 
-
 // get all orders (admin only)
 router.get('/all', auth.verify, (req, res) => {
 	const payload = auth.decode(req.headers.authorization);
@@ -15,18 +14,34 @@ router.get('/all', auth.verify, (req, res) => {
 
 // Get orderHistory of the logged in user
 router.get('/orderHistory', auth.verify, (req, res) => {
-	const userId = auth.decode(req.headers.authorization).id;
+	const payload = auth.decode(req.headers.authorization);
 
-	orderController.getOrderHistory(userId).then(resultFromController => {
+	orderController.getOrderHistory(payload).then(resultFromController => {
 		res.send(resultFromController)
 	})
 })
 
+// Get total earnings (admin)
+router.get('/totalRevenue', auth.verify, (req, res) => {
+	const payload = auth.decode(req.headers.authorization);
+
+	orderController.getTotalRevenue(payload).then(resultFromController => {
+		res.send(resultFromController)
+	})
+});
+
+// Get popular sold products (admin)
+router.get('/popularProducts', (req, res) => {
+	orderController.getPopularProducts().then(resultFromController => {
+		res.send(resultFromController)
+	})
+});
+
 // checkout the items in the cart of the logged in user
 router.post('/', auth.verify, (req, res) => {
-	const userId = auth.decode(req.headers.authorization).id;
+	const payload = auth.decode(req.headers.authorization);
 	
-	orderController.checkout(userId).then(resultFromController => {
+	orderController.checkout(payload).then(resultFromController => {
 		res.send(resultFromController)
 	})
 });
