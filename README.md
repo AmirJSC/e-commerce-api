@@ -1,6 +1,5 @@
 # E-Commerce-API
 
----
 # About the project:
 This API has been made for a small scale e-commerce businesses using RESTful API design and built using the following technologies:
 
