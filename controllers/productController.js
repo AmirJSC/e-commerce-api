@@ -81,6 +81,7 @@ module.exports.updateProductDetails = async(data) => {
 			result.description = description;
 			result.price = price;
 			result.category = category;
+			result.url = url;
 			result.quantity = quantity;
 
 			return result.save().then((result, err) => {
