@@ -23,7 +23,7 @@ const productSchema = new mongoose.Schema({
 	},
 	url: {
 		type: String,
-		required: [true, "Category is required."]
+		required: [true, "Url is required."]
 	},
 	createdOn: {
 		type: Date,

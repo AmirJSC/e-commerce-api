@@ -1,7 +1,7 @@
 const Product = require('../models/Product');
 
 module.exports.createProduct = async (data) => {
-	const {name, description, price, category, isActive, quantity} = data.reqBody
+	const {name, description, price, category, url, isActive, quantity} = data.reqBody
 
 	let isProductExisting = await Product.find({name: name}).then(result => {
 		if(result.length > 0) {
@@ -22,6 +22,7 @@ module.exports.createProduct = async (data) => {
 			description: description,
 			price: price,
 			category: category,
+			url: url,
 			isActive: isActive,
 			quantity: quantity
 
