@@ -46,7 +46,7 @@ module.exports.loginUser = (user) => {
 
 	return User.findOne({email: user.email}).then(result => {
 		if(result === null) {
-			return 'No user is found with this email.'
+			return false;
 		}
 		else {
 			const isPasswordCorrect = bcrypt.compareSync(user.password, result.password);
@@ -54,7 +54,7 @@ module.exports.loginUser = (user) => {
 				return {access: auth.createAccessToken(result)}
 			} 
 			else {
-				return 'Password is incorrect.'
+				return false;
 			} 
 		}
 	})
