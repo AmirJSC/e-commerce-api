@@ -6,40 +6,38 @@ const dotenv = require('dotenv');
 dotenv.config();
 const primaryAdminEmail = process.env.PRIMARY_ADMIN_EMAIL;
 
-module.exports.registerUser = async (reqBody) =>  {
-	let isEmailTaken = await User.find({email: reqBody.email}).then(result => {
+module.exports.checkEmailExists = (reqBody) => {
+	return User.find({email: reqBody.email}).then(result => {
 		if(result.length > 0) {
-			return null;
+			return true;
 		}
 		else {
 			return false;
 		}
 	})
+}
 
+module.exports.registerUser = (reqBody) =>  {
 	const {firstName, lastName, email, password, isAdmin, mobileNo, address} = reqBody;
-	if(!isEmailTaken) {
-		let newUser = new User({
-			firstName: firstName,
-			lastName: lastName,
-			email: email,
-			password: bcrypt.hashSync(password, 10),
-			isAdmin: isAdmin,
-			mobileNo: mobileNo,
-			address: address
-		});
 
-		return newUser.save().then((user, err) => {
-			if(err) {
-				return false;
-			}
-			else {
-				return user;
-			}
-		})
-	}
-	else {
-		return 'Email is already taken.'
-	}
+	let newUser = new User({
+		firstName: firstName,
+		lastName: lastName,
+		email: email,
+		password: bcrypt.hashSync(password, 10),
+		isAdmin: isAdmin,
+		mobileNo: mobileNo,
+		address: address
+	});
+
+	return newUser.save().then((user, err) => {
+		if(err) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	})
 }
 
 module.exports.loginUser = (user) => {
