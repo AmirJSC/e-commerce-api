@@ -9,7 +9,7 @@ const primaryAdminEmail = process.env.PRIMARY_ADMIN_EMAIL;
 module.exports.registerUser = async (reqBody) =>  {
 	let isEmailTaken = await User.find({email: reqBody.email}).then(result => {
 		if(result.length > 0) {
-			return true;
+			return null;
 		}
 		else {
 			return false;
